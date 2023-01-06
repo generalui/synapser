@@ -223,110 +223,110 @@ jobs:
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
           echo "UPLOAD_NAME=$UPLOAD_NAME" >> $GITHUB_ENV
 
-      # - name: upload-artifact
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: ${{env.UPLOAD_NAME}}
-      #     path: ${{env.ARTIFACT_NAME}}
+      - name: upload-artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{env.UPLOAD_NAME}}
+          path: ${{env.ARTIFACT_NAME}}
 
-  # deploy:
-  #   runs-on: ubuntu-18.04
-  #   needs: build
-  #   if: github.event_name == 'release'
-  #   outputs:
-  #     s3_ran: ${{ steps.deploy-to-target.outputs.s3_ran }}
+  deploy:
+    runs-on: ubuntu-18.04
+    needs: build
+    if: github.event_name == 'release'
+    outputs:
+      s3_ran: ${{ steps.deploy-to-target.outputs.s3_ran }}
 
-  #   steps:
-  #     - name: check-deployment-target
-  #       id: check-deployment-target
-  #       if: ${{github.event.action == 'published'}}
-  #       shell: bash
-  #       run: |
-  #         DEPLOY_TARGET=""
-  #         RELEASE_VERSION=""
-  #         RELEASE_TAG=${{ github.event.release.tag_name }}
-  #         if [[ $RELEASE_TAG =~ ^v?([[:digit:]\.]+)(-rc)? ]]; then
-  #           RELEASE_VERSION="${BASH_REMATCH[1]}"
-  #           echo $RELEASE_VERSION
-  #           if [[ -n "$RELEASE_VERSION" ]]; then
-  #             if [[ "${{ github.event.release.prerelease }}" == "true" ]]; then
-  #               DEPLOY_TARGET="staging"
-  #             else
-  #               DEPLOY_TARGET="prod"
-  #             fi
-  #           fi
-  #         fi
+    steps:
+      - name: check-deployment-target
+        id: check-deployment-target
+        if: ${{github.event.action == 'published'}}
+        shell: bash
+        run: |
+          DEPLOY_TARGET=""
+          RELEASE_VERSION=""
+          RELEASE_TAG=${{ github.event.release.tag_name }}
+          if [[ $RELEASE_TAG =~ ^v?([[:digit:]\.]+)(-rc)? ]]; then
+            RELEASE_VERSION="${BASH_REMATCH[1]}"
+            echo $RELEASE_VERSION
+            if [[ -n "$RELEASE_VERSION" ]]; then
+              if [[ "${{ github.event.release.prerelease }}" == "true" ]]; then
+                DEPLOY_TARGET="staging"
+              else
+                DEPLOY_TARGET="prod"
+              fi
+            fi
+          fi
 
-  #         echo "DEPLOY_TARGET=$DEPLOY_TARGET" >> $GITHUB_ENV
-  #         echo "::set-output name=deploy_target::$DEPLOY_TARGET"
+          echo "DEPLOY_TARGET=$DEPLOY_TARGET" >> $GITHUB_ENV
+          echo "::set-output name=deploy_target::$DEPLOY_TARGET"
 
-  #     - name: download-artifacts
-  #       uses: actions/download-artifact@v2
-  #       if: ${{steps.check-deployment-target.outputs.deploy_target != ''}}
-  #       with:
-  #         path: deploy_artifacts
+      - name: download-artifacts
+        uses: actions/download-artifact@v2
+        if: ${{steps.check-deployment-target.outputs.deploy_target != ''}}
+        with:
+          path: deploy_artifacts
 
-  #     - name: deploy-to-target
-  #       id: deploy-to-target
-  #       if: ${{steps.check-deployment-target.outputs.deploy_target != ''}}
-  #       shell: bash
-  #       run: |
-  #         # we use a gist to upload and the gist internally uses R so we need R on this runner.
-  #         # TODO maybe create a docker image to run this with R preloaded (and/or an action).
-  #         sudo apt-get -y update && sudo apt-get -y install r-base
+      - name: deploy-to-target
+        id: deploy-to-target
+        if: ${{steps.check-deployment-target.outputs.deploy_target != ''}}
+        shell: bash
+        run: |
+          # we use a gist to upload and the gist internally uses R so we need R on this runner.
+          # TODO maybe create a docker image to run this with R preloaded (and/or an action).
+          sudo apt-get -y update && sudo apt-get -y install r-base
 
-  #         export ARTIFACTS_DIR=deploy_artifacts
-  #         if [[ "$DEPLOY_TARGET" == "staging" ]]; then
-  #           export AWS_ACCESS_KEY_ID=${{secrets.S3_RAN_STAGING_AWS_ACCESS_KEY_ID}}
-  #           export AWS_SECRET_ACCESS_KEY=${{secrets.S3_RAN_STAGING_AWS_SECRET_ACCESS_KEY}}
-  #           export AWS_DEFAULT_REGION=us-east-1
-  #           export S3_RAN=staging-ran.synapse.org
-  #         elif [[ "$DEPLOY_TARGET" == "prod" ]]; then
-  #           export AWS_ACCESS_KEY_ID=${{secrets.S3_RAN_PROD_AWS_ACCESS_KEY_ID}}
-  #           export AWS_SECRET_ACCESS_KEY=${{secrets.S3_RAN_PROD_AWS_SECRET_ACCESS_KEY}}
-  #           export AWS_DEFAULT_REGION=us-east-1
-  #           export S3_RAN=ran.synapse.org
-  #         fi
+          export ARTIFACTS_DIR=deploy_artifacts
+          if [[ "$DEPLOY_TARGET" == "staging" ]]; then
+            export AWS_ACCESS_KEY_ID=${{secrets.S3_RAN_STAGING_AWS_ACCESS_KEY_ID}}
+            export AWS_SECRET_ACCESS_KEY=${{secrets.S3_RAN_STAGING_AWS_SECRET_ACCESS_KEY}}
+            export AWS_DEFAULT_REGION=us-east-1
+            export S3_RAN=staging-ran.synapse.org
+          elif [[ "$DEPLOY_TARGET" == "prod" ]]; then
+            export AWS_ACCESS_KEY_ID=${{secrets.S3_RAN_PROD_AWS_ACCESS_KEY_ID}}
+            export AWS_SECRET_ACCESS_KEY=${{secrets.S3_RAN_PROD_AWS_SECRET_ACCESS_KEY}}
+            export AWS_DEFAULT_REGION=us-east-1
+            export S3_RAN=ran.synapse.org
+          fi
 
-  #         curl -s https://raw.githubusercontent.com/Sage-Bionetworks/CI-Build-Tools/master/r-pkg/deploy.sh | bash
-  #         echo "::set-output name=s3_ran::$S3_RAN"
+          curl -s https://raw.githubusercontent.com/Sage-Bionetworks/CI-Build-Tools/master/r-pkg/deploy.sh | bash
+          echo "::set-output name=s3_ran::$S3_RAN"
 
-  # # on each of our matrix platforms, download the newly uploaded package from RAN
-  # check-deploy:
-  #   needs:
-  #     [build, deploy]
+  # on each of our matrix platforms, download the newly uploaded package from RAN
+  check-deploy:
+    needs:
+      [build, deploy]
 
-  #   strategy:
-  #     matrix:
-  #       os: [ubuntu-18.04, windows-2019, macos-mojave]
-  #       r: [4.0.5, 4.1.0]
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, windows-2019, macos-12]
+        r: [4.2.2]
 
-  #   runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
 
-  #   steps:
-  #     - uses: actions/checkout@master
-  #     - name: setup-r
-  #       if: ${{matrix.os != 'macos-mojave'}}
-  #       uses: r-lib/actions/setup-r@v1
-  #       with:
-  #         r-version: ${{ matrix.r }}
+    steps:
+      - uses: actions/checkout@master
+      - name: setup-r
+        if: ${{matrix.os != 'macos-12'}}
+        uses: r-lib/actions/setup-r@v1
+        with:
+          r-version: ${{ matrix.r }}
 
-  #     - name: setup-r-mac-mojave
-  #       if: ${{matrix.os == 'macos-mojave'}}
-  #       run: |
-  #         # on macos mojave we use a self-hosted runner we swap among the pre-installed R versions
-  #         R_MINOR_VERSION="${{ needs.build.outputs.r_minor_version }}"
-  #         rm -rf /Library/Frameworks/R.framework/Versions/Current
-  #         ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
+      - name: setup-r-mac-mojave
+        if: ${{matrix.os == 'macos-12'}}
+        run: |
+          # on macos mojave we use a self-hosted runner we swap among the pre-installed R versions
+          R_MINOR_VERSION="${{ needs.build.outputs.r_minor_version }}"
+          rm -rf /Library/Frameworks/R.framework/Versions/Current
+          ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
 
-  #     - name: check-install
-  #       shell: bash
-  #       run: |
-  #         RAN="http://${{ needs.deploy.outputs.s3_ran }}"
-  #         VERSION_TO_CHECK="${{ needs.build.outputs.package_version }}"
-  #         PACKAGE="synapser"
-  #         echo "if (available.packages(repos='$RAN')['$PACKAGE','Version'] != '$VERSION_TO_CHECK') { quit(save = 'no', status = 1) }" > test.R
-  #         echo "try(remove.packages('$PACKAGE'), silent=T)" >> test.R
-  #         echo "install.packages('$PACKAGE', repos=c('$RAN', 'http://cran.fhcrc.org'))" >> test.R
-  #         echo "library('$PACKAGE')" >> test.R
-  #         R --vanilla < test.R
+      - name: check-install
+        shell: bash
+        run: |
+          RAN="http://${{ needs.deploy.outputs.s3_ran }}"
+          VERSION_TO_CHECK="${{ needs.build.outputs.package_version }}"
+          PACKAGE="synapser"
+          echo "if (available.packages(repos='$RAN')['$PACKAGE','Version'] != '$VERSION_TO_CHECK') { quit(save = 'no', status = 1) }" > test.R
+          echo "try(remove.packages('$PACKAGE'), silent=T)" >> test.R
+          echo "install.packages('$PACKAGE', repos=c('$RAN', 'http://cran.fhcrc.org'))" >> test.R
+          echo "library('$PACKAGE')" >> test.R
+          R --vanilla < test.R
