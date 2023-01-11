@@ -90,19 +90,19 @@ jobs:
           echo "::set-output name=package_version::$PACKAGE_VERSION"
           echo "::set-output name=r_minor_version::$R_MINOR_VERSION"
 
-      - name: setup-r-mac-12
-        if: ${{matrix.os == 'macos-12'}}
-        run: |
-          # on macos mojave we use a self-hosted runner we swap among the pre-installed R versions
-          # rm -rf /Library/Frameworks/R.framework/Versions/Current
-          # ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
+      # - name: setup-r-mac-12
+      #   if: ${{matrix.os == 'macos-12'}}
+      #   run: |
+      #     # on macos mojave we use a self-hosted runner we swap among the pre-installed R versions
+      #     # rm -rf /Library/Frameworks/R.framework/Versions/Current
+      #     # ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
 
-          R_LIBS_USER=${GITHUB_WORKSPACE}/R_LIBS
-          rm -rf R_LIBS_USER
-          mkdir -p $R_LIBS_USER
-          echo "R_LIBS_USER=$R_LIBS_USER" >> $GITHUB_ENV
+      #     R_LIBS_USER=${GITHUB_WORKSPACE}/R_LIBS
+      #     rm -rf R_LIBS_USER
+      #     mkdir -p $R_LIBS_USER
+      #     echo "R_LIBS_USER=$R_LIBS_USER" >> $GITHUB_ENV
 
-          echo "R=R" >> $GITHUB_ENV
+      #     echo "R=R" >> $GITHUB_ENV
 
       - name: install-test-config
         shell: bash
@@ -305,18 +305,17 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: setup-r
-        if: ${{matrix.os != 'macos-12'}}
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.r }}
 
-      - name: setup-r-mac-mojave
-        if: ${{matrix.os == 'macos-12'}}
-        run: |
-          # on macos mojave we use a self-hosted runner we swap among the pre-installed R versions
-          R_MINOR_VERSION="${{ needs.build.outputs.r_minor_version }}"
-          rm -rf /Library/Frameworks/R.framework/Versions/Current
-          ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
+      # - name: setup-r-mac-mojave
+      #   if: ${{matrix.os == 'macos-12'}}
+      #   run: |
+      #     # on macos mojave we use a self-hosted runner we swap among the pre-installed R versions
+      #     R_MINOR_VERSION="${{ needs.build.outputs.r_minor_version }}"
+      #     rm -rf /Library/Frameworks/R.framework/Versions/Current
+      #     ln -s /Library/Frameworks/R.framework/Versions/$R_MINOR_VERSION /Library/Frameworks/R.framework/Versions/Current
 
       - name: check-install
         shell: bash
