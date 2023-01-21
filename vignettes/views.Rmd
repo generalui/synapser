@@ -20,9 +20,7 @@ A view is a view of all entities (File, Folder, Project, Table, Docker Repositor
 
 Preliminaries:
 ```{r collapse=TRUE}
-library(reticulate)
 library(synapser)
-reticulate::py_run_string("from synapseclient import EntityViewType")
 synLogin()
 # Create a new project
 # use hex_digits to generate random string
@@ -67,9 +65,7 @@ view <- synStore(view)
 ```
 
 We support the following entity type in a View:
-```{r collapse=TRUE}
 EntityViewType
-```
 
 ```{r include = FALSE}
 # wait for the view to be created
