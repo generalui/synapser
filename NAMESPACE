@@ -1,4 +1,5 @@
 import(reticulate)
+importFrom(stats, setNames)
 
 exportPattern("^[^_]+$")
 

@@ -482,7 +482,7 @@ cleanUpStackTrace <- function(callable, args) {
 #' * `generateRWrappers` and `generateRdFiles` must be called with corresponding parameters to ensure
 #'    all R wrappers has sufficient documentation.
 #' @examples
-#' 1. Generate R wrappers for all functions, classes, and enums in "pyPackageName.aModuleInPyPackageName"
+#' # 1. Generate R wrappers for all functions, classes, and enums in "pyPackageName.aModuleInPyPackageName"
 #'
 #' callback <- function(name, def) {
 #'   setGeneric(name, def)
@@ -497,7 +497,7 @@ cleanUpStackTrace <- function(callable, args) {
 #'   setGenericCallback = callback,
 #'   assignEnumCallback = assignEnumCallback)
 #'
-#' 2. Generate R wrappers for module "pyPackageName.aModuleInPyPackageName", omitting function "myFun"
+#' # 2. Generate R wrappers for module "pyPackageName.aModuleInPyPackageName", omitting function "myFun"
 #'
 #' myfunctionFilter <- function(x) {
 #'   if (any(x$name == "myFun")) NULL else x
@@ -509,7 +509,7 @@ cleanUpStackTrace <- function(callable, args) {
 #'   assignEnumCallback = assignEnumCallback,
 #'   functionFilter = myfunctionFilter)
 #'
-#' 3. Generate R wrappers for module "pyPackageName.aModuleInPyPackageName", omitting the "MyObj" class
+#' # 3. Generate R wrappers for module "pyPackageName.aModuleInPyPackageName", omitting the "MyObj" class
 #'
 #' myclassFilter <- function(x) {
 #'   if (any(x$name == "MyObj")) NULL else x
@@ -521,7 +521,7 @@ cleanUpStackTrace <- function(callable, args) {
 #'   assignEnumCallback = assignEnumCallback,
 #'   classFilter = myclassFilter)
 #'
-#' 4. Generate R wrappers for class "synapseclient.client.Synapse" without exposing the "Synapse" object
+#' # 4. Generate R wrappers for class "synapseclient.client.Synapse" without exposing the "Synapse" object
 #'
 #' reticulate::py_run_string("import synapseclient")
 #' reticulate::py_run_string("syn = synapseclient.Synapse()")
@@ -532,7 +532,7 @@ cleanUpStackTrace <- function(callable, args) {
 #'                   assignEnumCallback = assignEnumCallback,
 #'                   pySingletonName = "syn")
 #'
-#' 5. Generate R wrappers for module "pyPackageName.aModuleInPyPackageName", transforming all returned values,
+#' # 5. Generate R wrappers for module "pyPackageName.aModuleInPyPackageName", transforming all returned values,
 #'    setting each returned object class name to "newName"
 #'
 #' myTransform <- function(x) {
@@ -1065,13 +1065,13 @@ writeContent <- function(content, name, targetFolder) {
 #'   examples in R. One must copy all auto-generated .Rd files to their package `/man` folder and make sure
 #'   that the language being used in these documents are friendly to R users.
 #' @examples
-#' 1. Generate .Rd files for all functions and classes in "pyPackageName.aModuleInPyPackageName"
+#' # 1. Generate .Rd files for all functions and classes in "pyPackageName.aModuleInPyPackageName"
 #' PythonEmbedInR::generateRdFiles(
 #'   srcRootDir = "path/to/R/pkg",
 #'   pyPkg = "pyPackageName",
 #'   container = "pyPackageName.aModuleInPyPackageName")
 #'
-#' 2. Generate docs for the module "pyPackageName.aModuleInPyPackageName", omitting the function "myFun"
+#' # 2. Generate docs for the module "pyPackageName.aModuleInPyPackageName", omitting the function "myFun"
 #' myfunctionFilter <- function(x) {
 #'   if (any(x$name == "myFun")) NULL else x
 #' }
@@ -1081,7 +1081,7 @@ writeContent <- function(content, name, targetFolder) {
 #'   container = "pyPackageName.aModuleInPyPackageName",
 #'   functionFilter = myfunctionFilter)
 #'
-#' 3.Generate docs for the module "pyPackageName.aModuleInPyPackageName", omitting the "MyObj" constructor
+#' # 3.Generate docs for the module "pyPackageName.aModuleInPyPackageName", omitting the "MyObj" constructor
 #' myclassFilter <- function(x) {
 #'   if (any(x$name == "MyObj")) NULL else x
 #' }
