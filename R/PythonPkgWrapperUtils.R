@@ -948,9 +948,8 @@ createFunctionRdContent <- function(templateDir, alias, title, description, usag
   }
   if (!missing(usage) && !is.null(usage)) content <- gsub("##usage##", usage, content, fixed = TRUE)
   if (!missing(argument) && !is.null(argument)) content <- gsub("##arguments##", argument, content, fixed = TRUE)
-  if (is.null(examples) || length(examples) == 0 || nchar(examples) == 0) {
-    content <- gsub("##examples##", "", content, fixed = TRUE)
-  } else {
+  if (!is.null(examples) && length(examples) > 0 && nchar(examples) > 0) {
+    content <- paste(content, "\n\\examples{\n##examples##\n}", collapse = "\n")
     # we comment out the examples which come from the Python client and need to be curated
     content <- gsub("##examples##", paste0("%\\dontrun{\n%", gsub("\n", "\n%", examples), "\n%}"), content, fixed = TRUE)
   }
