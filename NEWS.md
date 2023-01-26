@@ -4,6 +4,8 @@ ___
 ### Improvements
 * PythonEmbedInR dependency has been replaced by Reticulate ([SYNR-1310](https://sagebionetworks.jira.com/browse/SYNR-1310))
 * R-4.2.2 compatible
+* Python 3.11.1 compatible
+* Install all dependencies automatically
 
 ## synapser 0.11
 ___
