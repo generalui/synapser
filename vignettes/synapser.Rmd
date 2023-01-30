@@ -260,7 +260,7 @@ The core of the Synapser library is the [python client](https://python-docs.syna
 
 These are the documented conversions from R to  Python: [Reticulate Type Conversions](https://rstudio.github.io/reticulate/articles/calling_python.html#type-conversions)
 
-`NA` values in R do not have a direct equivelant in Python. This has been a topic of great discussion. Synapser is not trying to solve this. `NA` values in R are handled by Reticulate per the implementation defined in Reticulate.
+`NA` values in R do not have a direct equivalent in Python. This has been a topic of great discussion. Synapser is not trying to solve this. `NA` values in R are handled by Reticulate per the implementation defined in Reticulate.
 
 When working with R and Reticulate, NA values in types tables are converted by Reticulate depending on the data type.
 
