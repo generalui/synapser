@@ -20,10 +20,7 @@ A view is a view of all entities (File, Folder, Project, Table, Docker Repositor
 
 Preliminaries:
 ```{r collapse=TRUE}
-library(reticulate)
 library(synapser)
-syn <- reticulate::import("synapseclient")
-EntityViewType <- syn$EntityViewType
 synLogin()
 # Create a new project
 # use hex_digits to generate random string
